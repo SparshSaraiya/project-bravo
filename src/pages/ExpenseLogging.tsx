@@ -1,11 +1,30 @@
 import { useState } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Card } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 
@@ -23,10 +42,42 @@ interface Entry {
 }
 
 const mockEntries: Entry[] = [
-  { id: "1", type: "income", category: "Salary", amount: 5000, description: "Monthly salary", date: "2025-10-01", period: "monthly" },
-  { id: "2", type: "expense", category: "Groceries", amount: 350, description: "Weekly groceries", date: "2025-10-15", period: "weekly" },
-  { id: "3", type: "expense", category: "Rent", amount: 1200, description: "Monthly rent", date: "2025-10-01", period: "monthly" },
-  { id: "4", type: "expense", category: "Transportation", amount: 50, description: "Gas", date: "2025-10-20", period: "weekly" },
+  {
+    id: "1",
+    type: "income",
+    category: "Salary",
+    amount: 5000,
+    description: "Monthly salary",
+    date: "2025-10-01",
+    period: "monthly",
+  },
+  {
+    id: "2",
+    type: "expense",
+    category: "Groceries",
+    amount: 350,
+    description: "Weekly groceries",
+    date: "2025-10-15",
+    period: "weekly",
+  },
+  {
+    id: "3",
+    type: "expense",
+    category: "Rent",
+    amount: 1200,
+    description: "Monthly rent",
+    date: "2025-10-01",
+    period: "monthly",
+  },
+  {
+    id: "4",
+    type: "expense",
+    category: "Transportation",
+    amount: 50,
+    description: "Gas",
+    date: "2025-10-20",
+    period: "weekly",
+  },
 ];
 
 export function ExpenseLogging() {
@@ -44,14 +95,16 @@ export function ExpenseLogging() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (editingEntry) {
       // Update existing entry
-      setEntries(entries.map(entry => 
-        entry.id === editingEntry.id 
-          ? { ...entry, ...formData, amount: parseFloat(formData.amount) }
-          : entry
-      ));
+      setEntries(
+        entries.map((entry) =>
+          entry.id === editingEntry.id
+            ? { ...entry, ...formData, amount: parseFloat(formData.amount) }
+            : entry
+        )
+      );
       toast.success("Entry updated successfully!");
     } else {
       // Add new entry
@@ -63,7 +116,7 @@ export function ExpenseLogging() {
       setEntries([...entries, newEntry]);
       toast.success("Entry added successfully!");
     }
-    
+
     resetForm();
   };
 
@@ -81,7 +134,7 @@ export function ExpenseLogging() {
   };
 
   const handleDelete = (id: string) => {
-    setEntries(entries.filter(entry => entry.id !== id));
+    setEntries(entries.filter((entry) => entry.id !== id));
     toast.success("Entry deleted successfully!");
   };
 
@@ -103,12 +156,17 @@ export function ExpenseLogging() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-slate-900">Expense Logging</h1>
-          <p className="text-slate-600">Add, edit, and delete your income and expense entries</p>
+          <p className="text-slate-600">
+            Add, edit, and delete your income and expense entries
+          </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => {
-          setIsDialogOpen(open);
-          if (!open) resetForm();
-        }}>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) resetForm();
+          }}
+        >
           <DialogTrigger asChild>
             <Button className="gap-2">
               <Plus className="w-4 h-4" />
@@ -117,12 +175,19 @@ export function ExpenseLogging() {
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>{editingEntry ? "Edit Entry" : "Add New Entry"}</DialogTitle>
+              <DialogTitle>
+                {editingEntry ? "Edit Entry" : "Add New Entry"}
+              </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="type">Type</Label>
-                <Select value={formData.type} onValueChange={(value: EntryType) => setFormData({ ...formData, type: value })}>
+                <Select
+                  value={formData.type}
+                  onValueChange={(value: EntryType) =>
+                    setFormData({ ...formData, type: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -138,7 +203,9 @@ export function ExpenseLogging() {
                 <Input
                   id="category"
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
                   placeholder="e.g., Groceries, Salary"
                   required
                 />
@@ -151,7 +218,9 @@ export function ExpenseLogging() {
                   type="number"
                   step="0.01"
                   value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, amount: e.target.value })
+                  }
                   placeholder="0.00"
                   required
                 />
@@ -159,7 +228,12 @@ export function ExpenseLogging() {
 
               <div className="space-y-2">
                 <Label htmlFor="period">Period</Label>
-                <Select value={formData.period} onValueChange={(value: TimePeriod) => setFormData({ ...formData, period: value })}>
+                <Select
+                  value={formData.period}
+                  onValueChange={(value: TimePeriod) =>
+                    setFormData({ ...formData, period: value })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -178,7 +252,9 @@ export function ExpenseLogging() {
                   id="date"
                   type="date"
                   value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -188,7 +264,9 @@ export function ExpenseLogging() {
                 <Input
                   id="description"
                   value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
                   placeholder="Brief description"
                   required
                 />
@@ -225,22 +303,36 @@ export function ExpenseLogging() {
               <TableRow key={entry.id}>
                 <TableCell>{entry.date}</TableCell>
                 <TableCell>
-                  <span className={`inline-flex px-2 py-1 rounded ${
-                    entry.type === "income" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                  }`}>
+                  <span
+                    className={`inline-flex px-2 py-1 rounded ${
+                      entry.type === "income"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
                     {entry.type}
                   </span>
                 </TableCell>
                 <TableCell>{entry.category}</TableCell>
                 <TableCell>{entry.description}</TableCell>
                 <TableCell className="capitalize">{entry.period}</TableCell>
-                <TableCell className="text-right">${entry.amount.toFixed(2)}</TableCell>
+                <TableCell className="text-right">
+                  ${entry.amount.toFixed(2)}
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => handleEdit(entry)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEdit(entry)}
+                    >
                       <Pencil className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(entry.id)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(entry.id)}
+                    >
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </Button>
                   </div>

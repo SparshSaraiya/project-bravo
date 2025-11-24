@@ -1,4 +1,4 @@
-import { Card } from "./ui/card";
+import { Card } from "../components/ui/card";
 import { TrendingUp, DollarSign, PieChart, Users } from "lucide-react";
 
 export function Home() {
@@ -8,8 +8,9 @@ export function Home() {
       <div className="text-center space-y-4 py-12">
         <h1 className="text-slate-900">Welcome to Expense Tracker</h1>
         <p className="text-slate-600 max-w-2xl mx-auto">
-          A comprehensive financial management solution to track your income and expenses,
-          generate detailed reports, and maintain complete control over your finances.
+          A comprehensive financial management solution to track your income and
+          expenses, generate detailed reports, and maintain complete control
+          over your finances.
         </p>
       </div>
 
@@ -23,7 +24,8 @@ export function Home() {
             </div>
             <h3 className="text-slate-900">Track Finances</h3>
             <p className="text-slate-600">
-              Log income and expenses with flexible time periods (daily, weekly, monthly, yearly).
+              Log income and expenses with flexible time periods (daily, weekly,
+              monthly, yearly).
             </p>
           </Card>
 
@@ -33,7 +35,8 @@ export function Home() {
             </div>
             <h3 className="text-slate-900">Generate Reports</h3>
             <p className="text-slate-600">
-              View comprehensive summaries of income vs expenses and remaining balance.
+              View comprehensive summaries of income vs expenses and remaining
+              balance.
             </p>
           </Card>
 
@@ -43,7 +46,8 @@ export function Home() {
             </div>
             <h3 className="text-slate-900">Visual Analytics</h3>
             <p className="text-slate-600">
-              Understand spending patterns with visual category breakdowns and charts.
+              Understand spending patterns with visual category breakdowns and
+              charts.
             </p>
           </Card>
 
@@ -53,7 +57,8 @@ export function Home() {
             </div>
             <h3 className="text-slate-900">User Management</h3>
             <p className="text-slate-600">
-              Admin controls to manage users, edit entries, and generate system-wide reports.
+              Admin controls to manage users, edit entries, and generate
+              system-wide reports.
             </p>
           </Card>
         </div>
@@ -66,27 +71,39 @@ export function Home() {
           <ul className="grid md:grid-cols-2 gap-4">
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2"></div>
-              <span className="text-slate-700">Add, edit, and delete income/expense entries</span>
+              <span className="text-slate-700">
+                Add, edit, and delete income/expense entries
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2"></div>
-              <span className="text-slate-700">Flexible time period tracking</span>
+              <span className="text-slate-700">
+                Flexible time period tracking
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2"></div>
-              <span className="text-slate-700">Income vs expense comparisons</span>
+              <span className="text-slate-700">
+                Income vs expense comparisons
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2"></div>
-              <span className="text-slate-700">Category-based expense organization</span>
+              <span className="text-slate-700">
+                Category-based expense organization
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2"></div>
-              <span className="text-slate-700">Monthly summaries and balance tracking</span>
+              <span className="text-slate-700">
+                Monthly summaries and balance tracking
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-2"></div>
-              <span className="text-slate-700">Admin dashboard for user management</span>
+              <span className="text-slate-700">
+                Admin dashboard for user management
+              </span>
             </li>
           </ul>
         </Card>

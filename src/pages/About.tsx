@@ -1,5 +1,5 @@
-import { Card } from "./ui/card";
-import { Badge } from "./ui/badge";
+import { Card } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 import { GraduationCap, Briefcase, Code } from "lucide-react";
 
 const teamMembers = [
@@ -8,14 +8,16 @@ const teamMembers = [
     role: "Lead Developer",
     education: "BSc Computer Science, State University (2020)",
     skills: ["React", "TypeScript", "Node.js", "Database Design"],
-    experience: "3 years of full-stack development experience, specializing in financial applications",
+    experience:
+      "3 years of full-stack development experience, specializing in financial applications",
   },
   {
     name: "Sarah Johnson",
     role: "UI/UX Designer",
     education: "BA Design & Media, Design Institute (2019)",
     skills: ["Figma", "User Research", "Wireframing", "Prototyping"],
-    experience: "4 years designing user-centered applications for fintech and e-commerce",
+    experience:
+      "4 years designing user-centered applications for fintech and e-commerce",
   },
   {
     name: "Michael Chen",
@@ -29,7 +31,8 @@ const teamMembers = [
     role: "Project Manager",
     education: "MBA Technology Management, Business School (2018)",
     skills: ["Agile", "Scrum", "Project Planning", "Team Leadership"],
-    experience: "6 years managing cross-functional teams in software development projects",
+    experience:
+      "6 years managing cross-functional teams in software development projects",
   },
 ];
 
@@ -39,8 +42,9 @@ export function About() {
       <div className="text-center space-y-4">
         <h1 className="text-slate-900">About Our Team</h1>
         <p className="text-slate-600 max-w-2xl mx-auto">
-          Meet the talented individuals behind Expense Tracker. Our diverse team brings together
-          expertise in development, design, and project management.
+          Meet the talented individuals behind Expense Tracker. Our diverse team
+          brings together expertise in development, design, and project
+          management.
         </p>
       </div>
 

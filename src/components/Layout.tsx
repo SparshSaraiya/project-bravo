@@ -1,37 +1,33 @@
 import { useState } from "react";
-import {
-  Routes,
-  Route,
-  useNavigate,
-  useLocation,
-  Link,
-} from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 import {
   Menu,
+  Wallet,
   Home as HomeIcon,
+  BarChart3,
+  Shield,
   Info,
   Award,
   Mail,
-  Wallet,
-  BarChart3,
-  Shield,
+  LogOut,
 } from "lucide-react";
+// import { useAuth } from "../context/AuthContext";
+// import { supabase } from "../lib/supabase";
 
-import { Home } from "./components/Home";
-import { About } from "./components/About";
-import { Credits } from "./components/Credits";
-import { Contact } from "./components/Contact";
-import { ExpenseLogging } from "./components/ExpenseLogging";
-import { ExpenseReport } from "./components/ExpenseReport";
-import { AdminWindow } from "./components/AdminWindow";
-import { Button } from "./components/ui/button";
-import NotFound from "./components/NotFound";
-
-export default function App() {
-  const navigate = useNavigate(); // navigation function
-  const location = useLocation(); // gives url
+export default function Layout() {
+  const location = useLocation(); // get url
+  const navigate = useNavigate(); // react router navigation for url
+  const user = true;
+  // const { user } = useAuth(); // get user with custom auth hook to give user
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const handleLogout = async () => {
+    // await supabase.auth.signOut();
+    navigate("/login");
+  };
+
+  // define routes and icons
   const navigation = [
     { path: "/", label: "Home", icon: HomeIcon },
     { path: "/expenses", label: "Expense Logging", icon: Wallet },
@@ -50,20 +46,19 @@ export default function App() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               <Wallet className="w-8 h-8 text-blue-600" />
-              <h1 className="text-slate-900">Expense Tracker</h1>
+              <h1 className="text-slate-900 font-semibold">Expense Tracker</h1>
             </div>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
-                // determine if the current url path matches the item's path for styling
                 const isActive = location.pathname === item.path;
                 return (
                   <Button
                     key={item.path}
                     variant={isActive ? "default" : "ghost"}
-                    asChild // use asChild to wrap Link component so we can keep button styles from Button component. Link for accessibility and SPA navigation vs. a button
+                    asChild // using asChild so we can keep the Button styles while using a Link for accessibility when navigating
                     className="gap-2"
                   >
                     <Link to={item.path}>
@@ -73,6 +68,18 @@ export default function App() {
                   </Button>
                 );
               })}
+
+              {/* Logout Button (only show if user is logged in) */}
+              {user && (
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              )}
             </nav>
 
             {/* Mobile Menu Button */}
@@ -86,9 +93,9 @@ export default function App() {
             </Button>
           </div>
 
-          {/* Mobile Navigation */}
+          {/* Mobile Navigation Dropdown */}
           {isMenuOpen && (
-            <div className="md:hidden pb-4 space-y-1">
+            <div className="md:hidden pb-4 space-y-1 border-t border-slate-100 mt-2">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
@@ -96,12 +103,9 @@ export default function App() {
                   <Button
                     key={item.path}
                     variant={isActive ? "default" : "ghost"}
-                    onClick={() => {
-                      // navigate(item.path);
-                      setIsMenuOpen(false);
-                    }}
-                    asChild // use asChild to wrap Link component so we can keep button styles from Button component
+                    asChild
                     className="w-full justify-start gap-2"
+                    onClick={() => setIsMenuOpen(false)} // Close menu on click
                   >
                     <Link to={item.path}>
                       <Icon className="w-4 h-4" />
@@ -110,26 +114,30 @@ export default function App() {
                   </Button>
                 );
               })}
+
+              {/* Logout Button (Mobile) */}
+              {user && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full justify-start gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </Button>
+              )}
             </div>
           )}
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* define routes */}
-        <Routes>
-          {/* root route "/" */}
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/credits" element={<Credits />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/expenses" element={<ExpenseLogging />} />
-          <Route path="/reports" element={<ExpenseReport />} />
-          <Route path="/admin" element={<AdminWindow />} />
-          {/* error route: "*" */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        {/* <Outlet /> is a placeholder. React Router replaces this with the component for the current URL. */}
+        <Outlet />
       </main>
     </div>
   );

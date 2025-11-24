@@ -1,14 +1,45 @@
 import { useState } from "react";
-import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Badge } from "./ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { Label } from "./ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Users, FileText, BarChart3, Search, UserPlus, Download } from "lucide-react";
+import { Card } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import { Badge } from "../components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import { Label } from "../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  Users,
+  FileText,
+  BarChart3,
+  Search,
+  UserPlus,
+  Download,
+} from "lucide-react";
 import { toast } from "sonner@2.0.3";
 
 interface User {
@@ -21,10 +52,38 @@ interface User {
 }
 
 const mockUsers: User[] = [
-  { id: "1", name: "Admin User", email: "admin@example.com", role: "admin", status: "active", joinDate: "2025-01-01" },
-  { id: "2", name: "John Doe", email: "john@example.com", role: "user", status: "active", joinDate: "2025-03-15" },
-  { id: "3", name: "Jane Smith", email: "jane@example.com", role: "user", status: "active", joinDate: "2025-05-20" },
-  { id: "4", name: "Bob Wilson", email: "bob@example.com", role: "user", status: "inactive", joinDate: "2025-02-10" },
+  {
+    id: "1",
+    name: "Admin User",
+    email: "admin@example.com",
+    role: "admin",
+    status: "active",
+    joinDate: "2025-01-01",
+  },
+  {
+    id: "2",
+    name: "John Doe",
+    email: "john@example.com",
+    role: "user",
+    status: "active",
+    joinDate: "2025-03-15",
+  },
+  {
+    id: "3",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "user",
+    status: "active",
+    joinDate: "2025-05-20",
+  },
+  {
+    id: "4",
+    name: "Bob Wilson",
+    email: "bob@example.com",
+    role: "user",
+    status: "inactive",
+    joinDate: "2025-02-10",
+  },
 ];
 
 export function AdminWindow() {
@@ -32,17 +91,23 @@ export function AdminWindow() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
 
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleToggleStatus = (userId: string) => {
-    setUsers(users.map(user =>
-      user.id === userId
-        ? { ...user, status: user.status === "active" ? "inactive" : "active" }
-        : user
-    ));
+    setUsers(
+      users.map((user) =>
+        user.id === userId
+          ? {
+              ...user,
+              status: user.status === "active" ? "inactive" : "active",
+            }
+          : user
+      )
+    );
     toast.success("User status updated");
   };
 
@@ -54,7 +119,9 @@ export function AdminWindow() {
     <div className="space-y-6">
       <div>
         <h1 className="text-slate-900">Admin Dashboard</h1>
-        <p className="text-slate-600">Manage users, entries, and generate reports</p>
+        <p className="text-slate-600">
+          Manage users, entries, and generate reports
+        </p>
       </div>
 
       {/* Stats Overview */}
@@ -66,7 +133,7 @@ export function AdminWindow() {
           </div>
           <p className="text-slate-900">{users.length}</p>
           <p className="text-slate-600">
-            {users.filter(u => u.status === "active").length} active
+            {users.filter((u) => u.status === "active").length} active
           </p>
         </Card>
 
@@ -129,18 +196,25 @@ export function AdminWindow() {
                 <DialogHeader>
                   <DialogTitle>Add New User</DialogTitle>
                 </DialogHeader>
-                <form className="space-y-4" onSubmit={(e) => {
-                  e.preventDefault();
-                  toast.success("User added successfully");
-                  setIsAddUserOpen(false);
-                }}>
+                <form
+                  className="space-y-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    toast.success("User added successfully");
+                    setIsAddUserOpen(false);
+                  }}
+                >
                   <div className="space-y-2">
                     <Label>Name</Label>
                     <Input placeholder="Full name" required />
                   </div>
                   <div className="space-y-2">
                     <Label>Email</Label>
-                    <Input type="email" placeholder="email@example.com" required />
+                    <Input
+                      type="email"
+                      placeholder="email@example.com"
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Role</Label>
@@ -154,7 +228,9 @@ export function AdminWindow() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button type="submit" className="w-full">Add User</Button>
+                  <Button type="submit" className="w-full">
+                    Add User
+                  </Button>
                 </form>
               </DialogContent>
             </Dialog>
@@ -178,12 +254,20 @@ export function AdminWindow() {
                     <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
-                      <Badge variant={user.role === "admin" ? "default" : "secondary"}>
+                      <Badge
+                        variant={
+                          user.role === "admin" ? "default" : "secondary"
+                        }
+                      >
                         {user.role}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={user.status === "active" ? "default" : "secondary"}>
+                      <Badge
+                        variant={
+                          user.status === "active" ? "default" : "secondary"
+                        }
+                      >
                         {user.status}
                       </Badge>
                     </TableCell>
@@ -223,21 +307,27 @@ export function AdminWindow() {
                   <TableRow>
                     <TableCell>John Doe</TableCell>
                     <TableCell>2025-10-25</TableCell>
-                    <TableCell><Badge variant="secondary">Income</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">Income</Badge>
+                    </TableCell>
                     <TableCell>Salary</TableCell>
                     <TableCell className="text-right">$5,000.00</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Jane Smith</TableCell>
                     <TableCell>2025-10-24</TableCell>
-                    <TableCell><Badge>Expense</Badge></TableCell>
+                    <TableCell>
+                      <Badge>Expense</Badge>
+                    </TableCell>
                     <TableCell>Groceries</TableCell>
                     <TableCell className="text-right">$250.00</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>John Doe</TableCell>
                     <TableCell>2025-10-23</TableCell>
-                    <TableCell><Badge>Expense</Badge></TableCell>
+                    <TableCell>
+                      <Badge>Expense</Badge>
+                    </TableCell>
                     <TableCell>Rent</TableCell>
                     <TableCell className="text-right">$1,200.00</TableCell>
                   </TableRow>
@@ -255,7 +345,10 @@ export function AdminWindow() {
               <p className="text-slate-600">
                 Generate comprehensive reports on user activity and engagement.
               </p>
-              <Button className="gap-2 w-full" onClick={() => handleExportReport("User Activity")}>
+              <Button
+                className="gap-2 w-full"
+                onClick={() => handleExportReport("User Activity")}
+              >
                 <Download className="w-4 h-4" />
                 Export Report
               </Button>
@@ -264,9 +357,13 @@ export function AdminWindow() {
             <Card className="p-6 space-y-4">
               <h3 className="text-slate-900">Financial Summary</h3>
               <p className="text-slate-600">
-                System-wide financial summaries including all users' income and expenses.
+                System-wide financial summaries including all users' income and
+                expenses.
               </p>
-              <Button className="gap-2 w-full" onClick={() => handleExportReport("Financial Summary")}>
+              <Button
+                className="gap-2 w-full"
+                onClick={() => handleExportReport("Financial Summary")}
+              >
                 <Download className="w-4 h-4" />
                 Export Report
               </Button>
@@ -277,7 +374,10 @@ export function AdminWindow() {
               <p className="text-slate-600">
                 Detailed breakdown of spending patterns across all categories.
               </p>
-              <Button className="gap-2 w-full" onClick={() => handleExportReport("Category Analysis")}>
+              <Button
+                className="gap-2 w-full"
+                onClick={() => handleExportReport("Category Analysis")}
+              >
                 <Download className="w-4 h-4" />
                 Export Report
               </Button>
@@ -288,7 +388,10 @@ export function AdminWindow() {
               <p className="text-slate-600">
                 Track monthly trends in income, expenses, and savings rates.
               </p>
-              <Button className="gap-2 w-full" onClick={() => handleExportReport("Monthly Trends")}>
+              <Button
+                className="gap-2 w-full"
+                onClick={() => handleExportReport("Monthly Trends")}
+              >
                 <Download className="w-4 h-4" />
                 Export Report
               </Button>

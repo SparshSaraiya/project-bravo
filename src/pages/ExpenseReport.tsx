@@ -1,6 +1,26 @@
-import { Card } from "./ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { Card } from "../components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { TrendingUp, TrendingDown, DollarSign, Wallet } from "lucide-react";
 import { useState } from "react";
 
@@ -27,7 +47,7 @@ const monthlyData = [
 
 export function ExpenseReport() {
   const [selectedMonth, setSelectedMonth] = useState("October 2025");
-  
+
   const totalIncome = 5000;
   const totalExpenses = 3550;
   const balance = totalIncome - totalExpenses;
@@ -37,7 +57,9 @@ export function ExpenseReport() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-slate-900">Expense Report</h1>
-          <p className="text-slate-600">Visual summaries and analytics of your finances</p>
+          <p className="text-slate-600">
+            Visual summaries and analytics of your finances
+          </p>
         </div>
         <Select value={selectedMonth} onValueChange={setSelectedMonth}>
           <SelectTrigger className="w-48">
@@ -90,7 +112,9 @@ export function ExpenseReport() {
               <Wallet className="w-5 h-5 text-purple-600" />
             </div>
           </div>
-          <p className="text-slate-900">{((balance / totalIncome) * 100).toFixed(1)}%</p>
+          <p className="text-slate-900">
+            {((balance / totalIncome) * 100).toFixed(1)}%
+          </p>
         </Card>
       </div>
 
@@ -105,7 +129,9 @@ export function ExpenseReport() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                label={({ name, percent }) =>
+                  `${name} ${(percent * 100).toFixed(0)}%`
+                }
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
@@ -143,8 +169,18 @@ export function ExpenseReport() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} />
-            <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} />
+            <Line
+              type="monotone"
+              dataKey="income"
+              stroke="#10b981"
+              strokeWidth={2}
+            />
+            <Line
+              type="monotone"
+              dataKey="expenses"
+              stroke="#ef4444"
+              strokeWidth={2}
+            />
           </LineChart>
         </ResponsiveContainer>
       </Card>
@@ -154,16 +190,24 @@ export function ExpenseReport() {
         <h3 className="text-slate-900 mb-4">Category Details</h3>
         <div className="space-y-3">
           {categoryData.map((category, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 bg-slate-50 rounded-lg"
+            >
               <div className="flex items-center gap-3">
-                <div className="w-4 h-4 rounded" style={{ backgroundColor: category.color }}></div>
+                <div
+                  className="w-4 h-4 rounded"
+                  style={{ backgroundColor: category.color }}
+                ></div>
                 <span className="text-slate-700">{category.name}</span>
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-slate-600">
                   {((category.value / totalExpenses) * 100).toFixed(1)}%
                 </span>
-                <span className="text-slate-900">${category.value.toFixed(2)}</span>
+                <span className="text-slate-900">
+                  ${category.value.toFixed(2)}
+                </span>
               </div>
             </div>
           ))}

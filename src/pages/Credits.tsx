@@ -1,5 +1,5 @@
-import { Card } from "./ui/card";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Card } from "../components/ui/card";
+import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { CheckCircle2 } from "lucide-react";
 
 const contributions = [
@@ -55,8 +55,9 @@ export function Credits() {
       <div className="text-center space-y-4">
         <h1 className="text-slate-900">Project Credits</h1>
         <p className="text-slate-600 max-w-2xl mx-auto">
-          Recognizing the individual contributions that made this project possible.
-          Each team member played a crucial role in bringing Expense Tracker to life.
+          Recognizing the individual contributions that made this project
+          possible. Each team member played a crucial role in bringing Expense
+          Tracker to life.
         </p>
       </div>
 
@@ -66,7 +67,10 @@ export function Credits() {
             <div className="flex items-start gap-4">
               <div className="w-20 h-20 bg-slate-200 rounded-full overflow-hidden flex-shrink-0">
                 <ImageWithFallback
-                  src={`https://via.placeholder.com/80x80/3b82f6/ffffff?text=${person.name.split(' ').map(n => n[0]).join('')}`}
+                  src={`https://via.placeholder.com/80x80/3b82f6/ffffff?text=${person.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}`}
                   alt={person.name}
                   className="w-full h-full object-cover"
                 />
@@ -95,8 +99,9 @@ export function Credits() {
       <Card className="p-6 bg-blue-50 border-blue-200">
         <h3 className="text-slate-900 mb-2">Acknowledgments</h3>
         <p className="text-slate-600">
-          Special thanks to our advisors, testers, and the open-source community for their
-          invaluable support and feedback throughout the development process.
+          Special thanks to our advisors, testers, and the open-source community
+          for their invaluable support and feedback throughout the development
+          process.
         </p>
       </Card>
     </div>

@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card } from "./ui/card";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
+import { Card } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Button } from "../components/ui/button";
+import { Label } from "../components/ui/label";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 
@@ -17,11 +17,13 @@ export function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Simulate sending to team emails
     console.log("Form submitted:", formData);
-    toast.success("Message sent successfully! Our team will get back to you soon.");
-    
+    toast.success(
+      "Message sent successfully! Our team will get back to you soon."
+    );
+
     // Reset form
     setFormData({
       name: "",
@@ -31,7 +33,9 @@ export function Contact() {
     });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -43,8 +47,8 @@ export function Contact() {
       <div className="text-center space-y-4">
         <h1 className="text-slate-900">Contact Us</h1>
         <p className="text-slate-600">
-          Have questions or feedback? We'd love to hear from you. Fill out the form below
-          and our team will get back to you as soon as possible.
+          Have questions or feedback? We'd love to hear from you. Fill out the
+          form below and our team will get back to you as soon as possible.
         </p>
       </div>
 
