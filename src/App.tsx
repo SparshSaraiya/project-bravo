@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useNavigate,
+  useLocation,
+  Link,
+} from "react-router-dom";
 import {
   Menu,
   Home as HomeIcon,
@@ -57,11 +63,13 @@ export default function App() {
                   <Button
                     key={item.path}
                     variant={isActive ? "default" : "ghost"}
-                    onClick={() => navigate(item.path)}
+                    asChild // use asChild to wrap Link component so we can keep button styles from Button component. Link for accessibility and SPA navigation vs. a button
                     className="gap-2"
                   >
-                    <Icon className="w-4 h-4" />
-                    {item.label}
+                    <Link to={item.path}>
+                      <Icon className="w-4 h-4" />
+                      {item.label}
+                    </Link>
                   </Button>
                 );
               })}
@@ -89,13 +97,16 @@ export default function App() {
                     key={item.path}
                     variant={isActive ? "default" : "ghost"}
                     onClick={() => {
-                      navigate(item.path);
+                      // navigate(item.path);
                       setIsMenuOpen(false);
                     }}
+                    asChild // use asChild to wrap Link component so we can keep button styles from Button component
                     className="w-full justify-start gap-2"
                   >
-                    <Icon className="w-4 h-4" />
-                    {item.label}
+                    <Link to={item.path}>
+                      <Icon className="w-4 h-4" />
+                      {item.label}
+                    </Link>
                   </Button>
                 );
               })}
