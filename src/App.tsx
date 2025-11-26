@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
+import { SetPassword } from "./pages/SetPassword";
 
 export default function App() {
   return (
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/expenses" element={<ExpenseLogging />} />
             <Route path="/reports" element={<ExpenseReport />} />
             <Route path="/admin" element={<AdminWindow />} />
+            <Route path="/set-password" element={<SetPassword />} />
           </Route>
         </Route>
       </Routes>

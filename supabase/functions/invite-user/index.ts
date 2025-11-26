@@ -28,9 +28,10 @@ Deno.serve(async (req) => {
     // This sends a magic link to the user's email
     const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       data: { 
-        organization_id: orgId,
-        full_name: "", // add meta data here later
-        organization: orgName || 'Default Org' }, // will want to add the org name as well. Attach metadata to the user
+        organization_id: orgId},
+        // full_name: "", // add meta data here later
+        // organization: orgName || 'Default Org' }, // will want to add the org name as well. Attach metadata to the user
+        redirect_to: 'http://localhost:3000/set-password', // CHANGE this to production URL later
       // redirect_to: 'http://localhost:3000/setup-password' // Uncomment this for local dev redirection
     })
 
@@ -50,3 +51,5 @@ Deno.serve(async (req) => {
     })
   }
 })
+
+// update edge function eac time: npx supabase functions deploy invite-user --project-ref "rbvmenphejjqlgmjfohw"
