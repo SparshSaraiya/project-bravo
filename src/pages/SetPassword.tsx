@@ -12,16 +12,17 @@ import {
   CardFooter,
 } from "../components/ui/card";
 import { Label } from "../components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Lock as LockIcon } from "lucide-react";
 import { toast } from "sonner";
 
 export function SetPassword() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleUpdatePassword = async (e: React.FormEvent) => {
+  const handleSetup = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -32,20 +33,41 @@ export function SetPassword() {
       return toast.error("Password must be at least 6 characters");
     }
 
+    if (fullName.trim().length < 2) {
+      return toast.error("Please enter your full name");
+    }
+
     setLoading(true);
 
-    // This updates the password for the CURRENTLY LOGGED IN user
-    const { error } = await supabase.auth.updateUser({
-      password: password,
-    });
+    // This updates the password for the CURRENTLY LOGGED IN user (when they click the link a new user is automatically created in supabase and logged in)
+    try {
+      // 2. Update Password (Auth)
+      const { error: authError } = await supabase.auth.updateUser({
+        password: password,
+      });
+      if (authError) throw authError;
 
-    if (error) {
+      // 3. Update Profile (Full Name)
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .update({ full_name: fullName })
+          .eq("id", user.id);
+
+        if (profileError) throw profileError;
+      }
+
+      toast.success("Account setup complete!");
+      navigate("/expenses"); // Go to dashboard
+    } catch (error: any) {
       toast.error(error.message);
-    } else {
-      toast.success("Password set successfully! Welcome aboard.");
-      navigate("/expenses"); // Redirect to dashboard
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -53,40 +75,68 @@ export function SetPassword() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            Set your Password
+            Welcome to the Team
           </CardTitle>
           <CardDescription className="text-center">
-            Finalize your account setup by creating a secure password.
+            Please complete your profile to activate your account.
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleUpdatePassword}>
+        <form onSubmit={handleSetup}>
           <CardContent className="space-y-4">
+            {/* New: Full Name Field */}
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Min 6 characters"
-              />
+              <Label htmlFor="name">Full Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="name"
+                  className="pl-9"
+                  placeholder="John Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+              </div>
             </div>
+
+            {/* Password Field */}
+            <div className="space-y-2">
+              <Label htmlFor="password">Create Password</Label>
+              <div className="relative">
+                <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  className="pl-9"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Min 6 characters"
+                />
+              </div>
+            </div>
+
+            {/* Confirm Password Field */}
             <div className="space-y-2">
               <Label htmlFor="confirm">Confirm Password</Label>
-              <Input
-                id="confirm"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <LockIcon className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="confirm"
+                  type="password"
+                  className="pl-9"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  placeholder="Re-type password"
+                />
+              </div>
             </div>
           </CardContent>
           <CardFooter>
             <Button className="w-full" type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Set Password & Login
+              Complete Setup
             </Button>
           </CardFooter>
         </form>
