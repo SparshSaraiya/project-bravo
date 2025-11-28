@@ -14,6 +14,7 @@ import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { SetPassword } from "./pages/SetPassword";
+import { Onboarding } from "./pages/Onboarding";
 
 export default function App() {
   return (
@@ -37,11 +38,13 @@ export default function App() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
+          <Route path="/set-password" element={<SetPassword />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+
           <Route element={<Layout />}>
             <Route path="/expenses" element={<ExpenseLogging />} />
             <Route path="/reports" element={<ExpenseReport />} />
             <Route path="/admin" element={<AdminWindow />} />
-            <Route path="/set-password" element={<SetPassword />} />
           </Route>
         </Route>
       </Routes>

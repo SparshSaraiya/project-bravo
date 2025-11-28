@@ -21,6 +21,9 @@ export function useOrganization() {
         .eq("id", user.id)
         .single();
 
+      // If no profile or no org_id, return null (This triggers the Onboarding redirect)
+      if (!profile?.organization_id) return null;
+
       if (error) throw error;
 
       return {
@@ -28,6 +31,7 @@ export function useOrganization() {
         name: profile?.organizations?.name, // Join automatically returns an object/array
       };
     },
+    retry: false,
     staleTime: 1000 * 60 * 5, // Cache this for 5 minutes
   });
 }
@@ -89,7 +93,7 @@ export function useProfiles() {
       const { data, error } = await supabase.functions.invoke('invite-user', {
         body: { 
           email, 
-          orgName: org.name,
+          // orgName: org.name,
           orgId: org.id 
         }
       });

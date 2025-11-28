@@ -31,8 +31,7 @@ Deno.serve(async (req) => {
         organization_id: orgId},
         // full_name: "", // add meta data here later
         // organization: orgName || 'Default Org' }, // will want to add the org name as well. Attach metadata to the user
-        redirect_to: 'http://localhost:3000/set-password', // CHANGE this to production URL later
-      // redirect_to: 'http://localhost:3000/setup-password' // Uncomment this for local dev redirection
+        redirectTo: 'http://localhost:3000/set-password', // CHANGE this to production URL later
     })
 
     if (error) throw error
@@ -52,4 +51,4 @@ Deno.serve(async (req) => {
   }
 })
 
-// update edge function eac time: npx supabase functions deploy invite-user --project-ref "rbvmenphejjqlgmjfohw"
+// update edge function each time: npx supabase functions deploy invite-user --project-ref "rbvmenphejjqlgmjfohw"
