@@ -11,15 +11,18 @@ import {
   Award,
   Mail,
   LogOut,
+  UserCircle,
 } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../features/auth/AuthContext";
+import { useUserProfile } from "../../features/auth/useUserProfile";
 
 export default function Header() {
   const location = useLocation(); // get url
   const navigate = useNavigate(); // react router navigation for url
   const { user } = useAuth(); // get user with custom auth hook to give user
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: profile } = useUserProfile(); // get user profile information
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -37,7 +40,10 @@ export default function Header() {
   const userLinks = [
     { path: "/expenses", label: "Dashboard", icon: Wallet },
     { path: "/reports", label: "Reports", icon: BarChart3 },
-    { path: "/admin", label: "Admin", icon: Shield },
+    // only show admin link if user is admin
+    ...(profile?.role === "admin"
+      ? [{ path: "/admin", label: "Admin", icon: Shield }]
+      : []),
   ];
 
   // determine links for navigation based on user auth status
@@ -81,13 +87,29 @@ export default function Header() {
           {/* auth buttons (no icons) */}
           <div className="hidden md:flex items-center gap-2 pl-4 border-l border-slate-200">
             {user ? (
-              <Button
-                variant="ghost"
-                onClick={handleLogout}
-                className="text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                Logout
-              </Button>
+              <>
+                {/* show user profile */}
+                <div className="flex items-center gap-2 text-right">
+                  <div className="hidden lg:block leading-tight">
+                    <p className="text-sm font-medium text-slate-900">
+                      {profile?.full_name || user.email?.split("@")[0]}
+                    </p>
+                    <p className="text-xs text-slate-500 capitalize">
+                      {profile?.role || "Member"}
+                    </p>
+                  </div>
+                  <UserCircle className="w-8 h-8 text-slate-300" />
+                </div>
+
+                {/* logout button */}
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  Logout
+                </Button>
+              </>
             ) : (
               <>
                 <Button variant="ghost" asChild>

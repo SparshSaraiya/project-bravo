@@ -52,18 +52,21 @@ export type Database = {
           id: string
           join_code: string | null
           name: string
+          owner_id: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           join_code?: string | null
           name: string
+          owner_id?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           join_code?: string | null
           name?: string
+          owner_id?: string | null
         }
         Relationships: []
       }
@@ -157,7 +160,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_my_org_id: { Args: never; Returns: string }
+      is_org_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

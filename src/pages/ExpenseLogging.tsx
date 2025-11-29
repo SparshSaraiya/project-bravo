@@ -25,9 +25,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../components/ui/dialog";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Filter } from "lucide-react";
 import { toast } from "sonner";
 import { useTransactions } from "../features/transactions/useTransactions";
+import { useUserProfile } from "../features/auth/useUserProfile";
 
 type EntryType = "income" | "expense";
 type TimePeriod = "daily" | "weekly" | "monthly" | "yearly";
@@ -40,6 +41,21 @@ export function ExpenseLogging() {
     // updateTransaction,
     deleteTransaction,
   } = useTransactions();
+  const { data: profile } = useUserProfile();
+  const [selectedUser, setSelectedUser] = useState<string>("all"); // for filtering by user
+  const isAdmin = profile?.role === "admin";
+
+  // filtering logic if admin
+  const uniqueUsers = isAdmin
+    ? Array.from(
+        new Set(transactions?.map((t) => t.profiles?.full_name).filter(Boolean))
+      )
+    : [];
+  // filter the transactions based on selected user
+  const displayedTransactions = transactions?.filter((t) => {
+    if (selectedUser === "all") return true;
+    return t.profiles?.full_name === selectedUser;
+  });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<any>(null);
@@ -141,6 +157,28 @@ export function ExpenseLogging() {
             Add, edit, and delete your income and expense entries
           </p>
         </div>
+
+        {/* might need to add a div */}
+        {isAdmin && (
+          <div className="w-[200px]">
+            <Select value={selectedUser} onValueChange={setSelectedUser}>
+              <SelectTrigger>
+                <Filter className="w-4 h-4 mr-2 text-slate-500" />
+                <SelectValue placeholder="Filter by User" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Users</SelectItem>
+                {uniqueUsers.map((name) => (
+                  <SelectItem key={name as string} value={name as string}>
+                    {name as string}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {/* might need to close a div */}
         <Dialog
           open={isDialogOpen}
           onOpenChange={(open) => {
@@ -272,6 +310,8 @@ export function ExpenseLogging() {
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
+              {/* show user who made transaction if admin */}
+              {isAdmin && <TableHead>User</TableHead>}
               <TableHead>Type</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Description</TableHead>
@@ -284,6 +324,14 @@ export function ExpenseLogging() {
             {transactions?.map((entry) => (
               <TableRow key={entry.id}>
                 <TableCell>{entry.date}</TableCell>
+                {/* show the user who created the transaction */}
+                {isAdmin && (
+                  <TableCell className="font-medium text-slate-600">
+                    {/* Safe navigation for profile name */}
+                    {entry.profiles?.full_name || "Unknown"}
+                  </TableCell>
+                )}
+
                 <TableCell>
                   <span
                     className={`inline-flex px-2 py-1 rounded capitalize ${

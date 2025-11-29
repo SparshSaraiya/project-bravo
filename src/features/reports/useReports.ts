@@ -6,10 +6,11 @@ export function useReports() {
   const { data: transactions, isLoading } = useQuery({
     queryKey: ["all_transactions_report"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("transactions").select("*");
+      const { data, error } = await supabase.from("transactions").select("*"); // RLS will ensure only allowed data is returned
       if (error) throw error;
       return data;
     },
+    staleTime: 1000 * 60, // 1 minute cache
   });
 
   if (isLoading || !transactions) {
@@ -53,7 +54,8 @@ export function useReports() {
       acc[monthKey] = { month: monthKey, income: 0, expenses: 0 };
 
     if (t.type === "income") acc[monthKey].income += Number(t.amount);
-    else acc[monthKey].expenses += Number(t.amount);
+    // expenses are stored as negative values in DB so convert to positive to use them
+    else acc[monthKey].expenses += Math.abs(Number(t.amount));
 
     return acc;
   }, {} as Record<string, any>);

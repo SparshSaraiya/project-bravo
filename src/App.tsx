@@ -16,6 +16,7 @@ import { ScrollToTop } from "./components/ui/ScrollToTop";
 import { SetPassword } from "./pages/SetPassword";
 import { Onboarding } from "./pages/Onboarding";
 import { Toaster } from "sonner";
+import AdminRoute from "./components/ui/AdminRoute";
 
 export default function App() {
   return (
@@ -48,7 +49,11 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/expenses" element={<ExpenseLogging />} />
             <Route path="/reports" element={<ExpenseReport />} />
-            <Route path="/admin" element={<AdminWindow />} />
+
+            {/* protecting admin with its own component */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminWindow />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

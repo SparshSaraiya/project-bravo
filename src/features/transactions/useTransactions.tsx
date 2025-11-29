@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase";
-import { Database } from "../../types/supabase"; // Import the huge type definition
+import { Database } from "../../types/supabase";
 
-// 1. EXTRACT TYPES AUTOMATICALLY
-// "Row" = the shape of the data when you SELECT
-export type Transaction = Database["public"]["Tables"]["transactions"]["Row"];
+// Define types manually to be safe
+export type Transaction =
+  Database["public"]["Tables"]["transactions"]["Row"] & {
+    profiles: { full_name: string | null } | null;
+  };
 
-// "Insert" = the shape required to ADD (handles optional 'id', 'created_at')
 export type NewTransaction =
   Database["public"]["Tables"]["transactions"]["Insert"];
 
@@ -20,23 +21,52 @@ export function useTransactions() {
   } = useQuery({
     queryKey: ["transactions"],
     queryFn: async () => {
-      // 2. NO MORE MANUAL CASTING
-      // The client now knows that .from('transactions') returns Transaction[]
-      const { data, error } = await supabase
+      // STEP 1: Fetch Transactions
+      const { data: transData, error: transError } = await supabase
         .from("transactions")
         .select("*")
         .order("date", { ascending: false });
 
-      if (error) throw error;
+      if (transError) throw transError;
+      if (!transData || transData.length === 0) return [];
 
-      // No need for "as Transaction[]" anymore!
-      return data;
+      // STEP 2: Fetch Profiles (FIXED)
+      // We use a "Type Predicate" here: (id): id is string => !!id
+      // This tells TypeScript: "I promise the resulting array contains ONLY strings, no nulls."
+      const userIds = Array.from(
+        new Set(
+          transData.map((t) => t.user_id).filter((id): id is string => !!id)
+        )
+      );
+
+      if (userIds.length === 0) return transData as Transaction[];
+
+      const { data: profilesData, error: profError } = await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", userIds); // <--- Error fixed: userIds is now strictly string[]
+
+      if (profError) throw profError;
+
+      // STEP 3: Combine them
+      const profileMap = new Map(profilesData?.map((p) => [p.id, p]));
+
+      const combinedData = transData.map((t) => ({
+        ...t,
+        // Safe lookup: Check if user_id exists before trying to get it from the map
+        profiles: (t.user_id && profileMap.get(t.user_id)) || {
+          full_name: "Unknown",
+        },
+      }));
+
+      return combinedData as Transaction[];
     },
+    staleTime: 1000 * 60, // 1 minute cache
   });
 
+  // --- Mutations (Create/Delete) ---
+
   const createTransaction = useMutation({
-    // 3. STRICT TYPING ON INPUTS
-    // TypeScript will yell at you if 'newTransaction' is missing a required DB column
     mutationFn: async (newTransaction: NewTransaction) => {
       const {
         data: { user },
@@ -45,7 +75,7 @@ export function useTransactions() {
 
       const { data, error } = await supabase
         .from("transactions")
-        .insert({ ...newTransaction, user_id: user.id }) // user.id might be required in DB
+        .insert({ ...newTransaction, user_id: user.id })
         .select();
 
       if (error) throw error;
