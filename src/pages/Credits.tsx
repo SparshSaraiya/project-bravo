@@ -53,6 +53,7 @@ const contributions = [
       "Created and managed social media accounts",
       "Helped Sparsh with test cases documentation",
       "Updated about/credits page",
+      "Tested the website to discover edge cases",
     ],
 	image: "/team/mukhammad.jpg",
   },
