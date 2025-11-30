@@ -28,7 +28,7 @@ export function useOrganization() {
 
       return {
         id: profile?.organization_id,
-        name: profile?.organizations?.name, // Join automatically returns an object/array
+        name: profile?.organizations?.name,
         joinCode: profile?.organizations?.join_code,
       };
     },
@@ -97,7 +97,6 @@ export function useProfiles() {
       const { data, error } = await supabase.functions.invoke('invite-user', {
         body: { 
           email, 
-          // orgName: org.name,
           orgId: org.id,
           redirectTo: redirectUrl, 
         }

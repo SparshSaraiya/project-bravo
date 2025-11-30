@@ -24,10 +24,8 @@ export default function Header() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: profile } = useUserProfile();
-
-  // Fetch Organization Data
-  const { data: org } = useOrganization();
+  const { data: profile } = useUserProfile(); // get user profile data
+  const { data: org } = useOrganization(); // get org data
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -56,7 +54,7 @@ export default function Header() {
         <div className="flex items-center h-16 justify-between">
           {/* LEFT SIDE: Brand & Context */}
           <div className="flex items-center gap-4">
-            {/* 1. Brand Logo */}
+            {/*  Logo */}
             <Link to="/" className="flex items-center gap-2 group">
               <div className="bg-blue-600 p-1.5 rounded-lg group-hover:bg-blue-700 transition-colors">
                 <Wallet className="w-5 h-5 text-white" />
@@ -66,12 +64,12 @@ export default function Header() {
               </span>
             </Link>
 
-            {/* 2. Vertical Separator (Only if logged in & org exists) */}
+            {/* Vertical Separator between logo and org pill */}
             {org?.name && (
               <div className="h-6 w-px bg-slate-200 rotate-12 mx-1 hidden sm:block" />
             )}
 
-            {/* 3. Organization Pill (The "Context") */}
+            {/* current organization pill */}
             {org?.name && (
               <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-full transition-colors hover:border-blue-200 hover:bg-blue-50/50 cursor-default">
                 <div className="bg-white p-0.5 rounded-full border border-slate-100 shadow-sm">
@@ -80,7 +78,7 @@ export default function Header() {
                 <span className="text-sm font-medium text-slate-700 max-w-[150px] truncate">
                   {org.name}
                 </span>
-                {/* Optional: Add a chevron if you ever plan to make this a dropdown later */}
+                {/* chevron in case we want users to be in multiple orgs in the future*/}
                 {/* <ChevronDown className="w-3 h-3 text-slate-400" /> */}
               </div>
             )}

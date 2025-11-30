@@ -41,10 +41,13 @@ import {
   Download,
   Building2,
   Copy,
+  CreditCard,
+  TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
 import { exportToCSV } from "../utils/export";
 import { useOrganization, useProfiles } from "../features/admin/useAdmin";
+import { useTransactions } from "../features/transactions/useTransactions";
 
 interface User {
   id: string;
@@ -93,6 +96,8 @@ const mockUsers: User[] = [
 export function AdminWindow() {
   const { profiles, isLoading, toggleStatus, inviteUser } = useProfiles();
   const { data: org } = useOrganization(); // Get Org Details including Join Code
+  const { transactions } = useTransactions(); // get transactions
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [newUserEmail, setNewUserEmail] = useState("");
@@ -106,6 +111,20 @@ export function AdminWindow() {
         (user.full_name &&
           user.full_name.toLowerCase().includes(searchTerm.toLowerCase()))
     ) || [];
+
+  // Calculate transaction stats
+  const activeUsers =
+    profiles?.filter((u) => u.status === "active").length || 0;
+  const totalTransactions = transactions?.length || 0;
+  const currentMonthTransactions =
+    transactions?.filter((t) => {
+      const tDate = new Date(t.date);
+      const now = new Date();
+      return (
+        tDate.getMonth() === now.getMonth() &&
+        tDate.getFullYear() === now.getFullYear()
+      );
+    }).length || 0;
 
   const handleStatusChange = (id: string, currentStatus: string | null) => {
     // If status is null/undefined, assume 'active' to toggle it to 'inactive'
@@ -157,72 +176,88 @@ export function AdminWindow() {
           <p className="text-slate-600">Manage your organization and users</p>
         </div>
 
-        {/* Organization Card with Join Code */}
-        {org && (
-          <Card className="flex items-center gap-4 p-3 bg-blue-50 border-blue-100">
-            <div className="p-2 bg-white rounded-full shadow-sm">
-              <Building2 className="w-5 h-5 text-blue-600" />
-            </div>
-            <div className="space-y-0.5">
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-                Organization
-              </p>
-              <p className="text-sm font-bold text-slate-900">{org.name}</p>
-            </div>
-            <div className="h-8 w-px bg-blue-200 mx-2" />
-            <div className="space-y-0.5">
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-                Join Code
-              </p>
-              <div
-                className="flex items-center gap-2 cursor-pointer group"
-                onClick={copyJoinCode}
-                title="Click to copy"
-              >
-                <code className="text-lg font-mono font-bold text-blue-700">
-                  {org.joinCode || "Loading..."}
-                </code>
-                <Copy className="w-3 h-3 text-slate-400 group-hover:text-blue-600 transition-colors" />
+        {/* Stats Cards Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Card 1: Org Info & Join Code */}
+          <Card className="p-6 relative overflow-hidden bg-gradient-to-br from-blue-50 to-white border-blue-100">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-500">
+                  Organization
+                </p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">
+                  {org?.name}
+                </h3>
+
+                <div
+                  className="flex items-center gap-2 mt-4 cursor-pointer bg-white w-fit px-3 py-1 rounded-full border border-blue-200 hover:border-blue-400 transition-colors"
+                  onClick={copyJoinCode}
+                  title="Click to copy join code"
+                >
+                  <span className="text-xs text-slate-400 font-semibold uppercase">
+                    Code:
+                  </span>
+                  <code className="text-sm font-mono font-bold text-blue-700">
+                    {org?.joinCode || "..."}
+                  </code>
+                  <Copy className="w-3 h-3 text-slate-400" />
+                </div>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <Building2 className="w-6 h-6 text-blue-600" />
               </div>
             </div>
           </Card>
-        )}
-      </div>
 
-      {/* Stats Cards (Dynamic) */}
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="p-6 space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-slate-600">Total Users</p>
-            <Users className="w-5 h-5 text-blue-600" />
-          </div>
-          <p className="text-slate-900 text-2xl font-bold">
-            {profiles?.length}
-          </p>
-          <p className="text-slate-600 text-sm">
-            {profiles?.filter((u) => u.status === "active").length} active
-          </p>
-        </Card>
-        {/* ... Other cards ... */}
-        <Card className="p-6 space-y-2">
-          <div className="flex items-center justify-between">
-            <p className="text-slate-600">Organization Information</p>
-            <Users className="w-5 h-5 text-blue-600" />
-          </div>
-          <p className="text-slate-900 text-2xl font-bold">
-            {profiles?.length}
-          </p>
-          <p className="text-slate-600 text-sm">
-            {profiles?.filter((u) => u.status === "active").length} active
-          </p>
-        </Card>
+          {/* Card 2: Total Users */}
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-500">
+                  Total Members
+                </p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">
+                  {profiles?.length}
+                </h3>
+                <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
+                  <span className="w-2 h-2 bg-green-500 rounded-full inline-block"></span>
+                  {activeUsers} active now
+                </p>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <Users className="w-6 h-6 text-purple-600" />
+              </div>
+            </div>
+          </Card>
+
+          {/* Card 3: Transaction Stats */}
+          <Card className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-500">
+                  Transactions
+                </p>
+                <h3 className="text-2xl font-bold text-slate-900 mt-1">
+                  {totalTransactions.toLocaleString()}
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  <span className="font-semibold text-slate-700">
+                    {currentMonthTransactions}
+                  </span>{" "}
+                  this month
+                </p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <CreditCard className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
 
       <Tabs defaultValue="users" className="space-y-6">
-        {/* ... TabsList ... */}
         <TabsList>
           <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="entries">Entries</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
 
@@ -329,112 +364,42 @@ export function AdminWindow() {
           </Card>
         </TabsContent>
 
-        {/* All Entries Tab */}
-        <TabsContent value="entries" className="space-y-4">
-          <Card className="p-6">
-            <div className="space-y-4">
-              <h3 className="text-slate-900">All User Entries</h3>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>User</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>John Doe</TableCell>
-                    <TableCell>2025-10-25</TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">Income</Badge>
-                    </TableCell>
-                    <TableCell>Salary</TableCell>
-                    <TableCell className="text-right">$5,000.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>Jane Smith</TableCell>
-                    <TableCell>2025-10-24</TableCell>
-                    <TableCell>
-                      <Badge>Expense</Badge>
-                    </TableCell>
-                    <TableCell>Groceries</TableCell>
-                    <TableCell className="text-right">$250.00</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>John Doe</TableCell>
-                    <TableCell>2025-10-23</TableCell>
-                    <TableCell>
-                      <Badge>Expense</Badge>
-                    </TableCell>
-                    <TableCell>Rent</TableCell>
-                    <TableCell className="text-right">$1,200.00</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          </Card>
-        </TabsContent>
-
         {/* Reports Tab */}
         <TabsContent value="reports" className="space-y-4">
           <div className="grid md:grid-cols-2 gap-6">
             <Card className="p-6 space-y-4">
-              <h3 className="text-slate-900">User Activity Report</h3>
-              <p className="text-slate-600">
-                Generate comprehensive reports on user activity and engagement.
+              <h3 className="text-slate-900 font-semibold flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-500" /> User Activity Report
+              </h3>
+              <p className="text-slate-600 text-sm">
+                Generate comprehensive CSV report of all users, their roles, and
+                status.
               </p>
               <Button
                 className="gap-2 w-full"
                 onClick={() => handleExportReport("User Activity")}
               >
                 <Download className="w-4 h-4" />
-                Export Report
+                Export CSV
               </Button>
             </Card>
 
             <Card className="p-6 space-y-4">
-              <h3 className="text-slate-900">Financial Summary</h3>
-              <p className="text-slate-600">
-                System-wide financial summaries including all users' income and
-                expenses.
+              <h3 className="text-slate-900 font-semibold flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-500" /> Financial
+                Summary
+              </h3>
+              <p className="text-slate-600 text-sm">
+                For detailed financial charts and PDF exports, please visit the
+                main Reports tab.
               </p>
               <Button
+                variant="outline"
                 className="gap-2 w-full"
-                onClick={() => handleExportReport("Financial Summary")}
+                onClick={() => (window.location.href = "/reports")}
               >
-                <Download className="w-4 h-4" />
-                Export Report
-              </Button>
-            </Card>
-
-            <Card className="p-6 space-y-4">
-              <h3 className="text-slate-900">Category Analysis</h3>
-              <p className="text-slate-600">
-                Detailed breakdown of spending patterns across all categories.
-              </p>
-              <Button
-                className="gap-2 w-full"
-                onClick={() => handleExportReport("Category Analysis")}
-              >
-                <Download className="w-4 h-4" />
-                Export Report
-              </Button>
-            </Card>
-
-            <Card className="p-6 space-y-4">
-              <h3 className="text-slate-900">Monthly Trends</h3>
-              <p className="text-slate-600">
-                Track monthly trends in income, expenses, and savings rates.
-              </p>
-              <Button
-                className="gap-2 w-full"
-                onClick={() => handleExportReport("Monthly Trends")}
-              >
-                <Download className="w-4 h-4" />
-                Export Report
+                <BarChart3 className="w-4 h-4" />
+                Go to Reports
               </Button>
             </Card>
           </div>
