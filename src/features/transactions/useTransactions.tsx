@@ -11,6 +11,8 @@ export type Transaction =
 export type NewTransaction =
   Database["public"]["Tables"]["transactions"]["Insert"];
 
+export type UpdateTransaction = Partial<NewTransaction>;
+
 export function useTransactions() {
   const queryClient = useQueryClient();
 
@@ -100,11 +102,35 @@ export function useTransactions() {
     },
   });
 
+  const updateTransaction = useMutation({
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: UpdateTransaction;
+    }) => {
+      const { data, error } = await supabase
+        .from("transactions")
+        .update(updates)
+        .eq("id", id)
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["all_transactions_report"] });
+    },
+  });
+
   return {
     transactions,
     isLoading,
     error,
     createTransaction,
     deleteTransaction,
+    updateTransaction,
   };
 }

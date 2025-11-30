@@ -52,8 +52,13 @@ const INCOME_CATEGORIES = [
 ];
 
 export function ExpenseLogging() {
-  const { transactions, isLoading, createTransaction, deleteTransaction } =
-    useTransactions();
+  const {
+    transactions,
+    isLoading,
+    createTransaction,
+    deleteTransaction,
+    updateTransaction,
+  } = useTransactions();
   const { data: profile } = useUserProfile();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -98,7 +103,28 @@ export function ExpenseLogging() {
         : Math.abs(numericAmount);
 
     if (editingEntry) {
-      toast.info("Edit functionality coming soon!");
+      updateTransaction.mutate(
+        {
+          id: editingEntry.id,
+          updates: {
+            name: formData.description,
+            amount: finalAmount,
+            category: formData.category,
+            date: formData.date,
+            type: formData.type,
+            period: formData.period,
+          },
+        },
+        {
+          onSuccess: () => {
+            toast.success("Entry updated successfully!");
+            resetForm();
+          },
+          onError: (err) => {
+            toast.error(`Error: ${err.message}`);
+          },
+        }
+      );
     } else {
       createTransaction.mutate(
         {
