@@ -13,9 +13,11 @@ import {
 import { Label } from "../components/ui/label";
 import { Building2, Users } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function Onboarding() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [orgName, setOrgName] = useState("");
   const [joinCode, setJoinCode] = useState("");
@@ -23,6 +25,10 @@ export function Onboarding() {
   // OPTION A: Create New Organization
   const handleCreateOrg = async (e: React.FormEvent) => {
     e.preventDefault();
+    // ensure org name is passed in
+    if (!orgName.trim())
+      return toast.error("Please enter an organization name");
+
     setLoading(true);
 
     try {
@@ -31,7 +37,7 @@ export function Onboarding() {
       } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      // 1. Create the Organization
+      // Create the Organization
       const { data: org, error: orgError } = await supabase
         .from("organizations")
         .insert({ name: orgName, owner_id: user.id })
@@ -40,7 +46,7 @@ export function Onboarding() {
 
       if (orgError) throw orgError;
 
-      // 2. Update Profile to link to this Org (as Admin)
+      // Update user profile to link to this Org (as Admin)
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -51,9 +57,13 @@ export function Onboarding() {
 
       if (profileError) throw profileError;
 
+      // invalidate queries to force react query to re-fetch the user profile before nagivating
+      await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      await queryClient.invalidateQueries({ queryKey: ["my-org-details"] });
+
       toast.success("Organization created!");
       // Force a reload so the AuthContext picks up the new organization_id
-      window.location.href = "/expenses";
+      navigate("/expenses");
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -76,8 +86,12 @@ export function Onboarding() {
 
       if (error) throw error;
 
+      // invalidate queries to force react query to re-fetch the user profile before nagivating
+      await queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      await queryClient.invalidateQueries({ queryKey: ["my-org-details"] });
+
       toast.success("Successfully joined the organization!");
-      window.location.href = "/expenses";
+      navigate("/expenses");
     } catch (error: any) {
       console.error(error);
       // Friendly error message if code is wrong
