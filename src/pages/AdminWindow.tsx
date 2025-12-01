@@ -173,7 +173,6 @@ export function AdminWindow() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-slate-900 text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-slate-600">Manage your organization and users</p>
         </div>
 
         {/* Stats Cards Grid */}
