@@ -55,11 +55,13 @@ export default function Header() {
           {/* LEFT SIDE: Brand & Context */}
           <div className="flex items-center gap-4">
             {/*  Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
-              <div className="bg-blue-600 p-1.5 rounded-lg group-hover:bg-blue-700 transition-colors">
-                <Wallet className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-slate-900 font-bold text-lg tracking-tight hidden sm:block">
+            <Link to="/" className="flex items-center gap-3 group">
+              <img
+                src="public/logo.png"
+                alt="Project Bravo Logo"
+                className="w-8 h-8 rounded-full object-cover shadow-sm group-hover:opacity-90 transition-opacity"
+              />
+              <span className="text-slate-900 font-medium text-lg tracking-tight hidden sm:block">
                 Expense Tracker
               </span>
             </Link>
@@ -93,18 +95,21 @@ export default function Header() {
                 return (
                   <Button
                     key={item.path}
-                    variant={isActive ? "secondary" : "ghost"}
+                    // We use "ghost" for both but style them manually for full control
+                    variant="ghost"
                     asChild
-                    className={`gap-2 h-9 ${
+                    className={`gap-2 h-9 transition-all duration-200 ${
                       isActive
-                        ? "bg-slate-100 text-slate-900"
-                        : "text-slate-600"
+                        ? "bg-blue-50 text-blue-700 font-medium shadow-sm ring-1 ring-blue-200/50"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
                     <Link to={item.path}>
                       <Icon
                         className={`w-4 h-4 ${
-                          isActive ? "text-blue-600" : "text-slate-400"
+                          isActive
+                            ? "text-blue-600"
+                            : "text-slate-400 group-hover:text-slate-600"
                         }`}
                       />
                       {item.label}
@@ -175,6 +180,18 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-slate-100 animate-in slide-in-from-top-5 duration-200">
             <div className="flex flex-col gap-1">
+              {/* Show Org Name in Mobile Menu if visible */}
+              {org?.name && (
+                <div className="px-4 py-2 mb-2">
+                  <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg">
+                    <Building2 className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-slate-700">
+                      {org.name}
+                    </span>
+                  </div>
+                </div>
+              )}
+
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
@@ -183,7 +200,9 @@ export default function Header() {
                     key={item.path}
                     variant={isActive ? "secondary" : "ghost"}
                     asChild
-                    className="w-full justify-start gap-3"
+                    className={`w-full justify-start gap-3 ${
+                      isActive ? "bg-blue-50 text-blue-700" : ""
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <Link to={item.path}>
