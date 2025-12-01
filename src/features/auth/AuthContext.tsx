@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-// hook we export for other components to use
+// export hook for other components to use
 export const useAuth = () => {
   return useContext(AuthContext);
 };

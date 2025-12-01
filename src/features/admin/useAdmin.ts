@@ -122,30 +122,3 @@ export function useProfiles() {
     inviteUser 
   };
 }
-
-/*
-TODO: modify signup flow with IDs
-const createOrg = async (orgName: string) => {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  // 1. Create Org
-  const { data: org, error } = await supabase
-    .from('organizations')
-    .insert({ name: orgName })
-    .select()
-    .single();
-    
-  if (error) return toast.error(error.message);
-
-  // 2. Link User to Org as Admin
-  await supabase
-    .from('profiles')
-    .update({ 
-      organization_id: org.id,
-      role: 'admin' 
-    })
-    .eq('id', user.id);
-
-  window.location.reload(); // Refresh to load new permissions
-};
-*/

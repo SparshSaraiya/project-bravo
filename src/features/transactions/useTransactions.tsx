@@ -32,9 +32,7 @@ export function useTransactions() {
       if (transError) throw transError;
       if (!transData || transData.length === 0) return [];
 
-      // STEP 2: Fetch Profiles (FIXED)
-      // We use a "Type Predicate" here: (id): id is string => !!id
-      // This tells TypeScript: "I promise the resulting array contains ONLY strings, no nulls."
+      // STEP 2: Fetch Profiles
       const userIds = Array.from(
         new Set(
           transData.map((t) => t.user_id).filter((id): id is string => !!id)
@@ -46,7 +44,7 @@ export function useTransactions() {
       const { data: profilesData, error: profError } = await supabase
         .from("profiles")
         .select("id, full_name")
-        .in("id", userIds); // <--- Error fixed: userIds is now strictly string[]
+        .in("id", userIds);
 
       if (profError) throw profError;
 
@@ -55,7 +53,7 @@ export function useTransactions() {
 
       const combinedData = transData.map((t) => ({
         ...t,
-        // Safe lookup: Check if user_id exists before trying to get it from the map
+        // Check if user_id exists before trying to get it from the map
         profiles: (t.user_id && profileMap.get(t.user_id)) || {
           full_name: "Unknown",
         },
